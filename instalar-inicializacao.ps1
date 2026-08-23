@@ -11,6 +11,22 @@
 #
 # Rodar de novo substitui o atalho antigo (não duplica).
 
+# Quando aberto via "Executar com o PowerShell" no Explorer, o Windows fecha
+# a janela assim que o script termina (ou dá erro) — rápido demais para ler
+# qualquer mensagem, inclusive erros de política de execução bloqueando o
+# script silenciosamente. Para evitar isso, o script se relança sozinho numa
+# janela nova com -NoExit, que fica aberta até você fechar de propósito.
+if (-not $env:HOTSWAP_REEXEC) {
+    $env:HOTSWAP_REEXEC = "1"
+    Start-Process powershell.exe -ArgumentList @(
+        "-NoExit",
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "`"$PSCommandPath`""
+    )
+    exit
+}
+
 $ErrorActionPreference = "Stop"
 
 Write-Host "=== Instalar HotSwap na inicialização do Windows ===" -ForegroundColor Cyan
