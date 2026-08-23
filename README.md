@@ -30,8 +30,10 @@ as Configurações de Exibição do Windows toda vez.
    (perto do relógio).
 4. Clique com o botão direito no ícone → explore o menu para ver os
    perfis detectados automaticamente para o seu monitor.
-5. (Opcional) Configure para iniciar com o Windows via Tarefa Agendada —
-   veja o passo a passo em [`src/HotSwap/README.md`](src/HotSwap/README.md#colocando-na-bandeja-ao-ligar-o-pc-tarefa-agendada).
+5. (Opcional) Para o HotSwap já estar na bandeja assim que o Windows
+   liga, rode `instalar-inicializacao.ps1` (clique direito → Executar
+   com o PowerShell) — ele cria um atalho na pasta Inicializar do
+   Windows. Detalhes em [`src/HotSwap/README.md`](src/HotSwap/README.md#colocando-na-bandeja-ao-ligar-o-pc).
 
 **Requisito:** [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
 (escolha "Desktop Runtime x64"). Se você já usa Visual Studio 2022 ou

@@ -72,46 +72,43 @@ Depois de compilado, copie a pasta `publish` (ou pelo menos o
 C:\Users\<você>\AppData\Local\HotSwap\HotSwap.exe
 ```
 
-## Colocando na bandeja ao ligar o PC (Tarefa Agendada)
+## Colocando na bandeja ao ligar o PC
 
-Você pediu para usar o Agendador de Tarefas do Windows em vez de um
-atalho na pasta Inicializar. Passo a passo:
+O jeito mais simples e confiável é um atalho na pasta **Inicializar** do
+Windows — o mesmo mecanismo usado por Firefox, Discord, Steam, etc., e
+por isso o HotSwap aparece listado normalmente na aba "Inicializar" do
+Gerenciador de Tarefas (Ctrl+Shift+Esc).
 
-1. Abra o **Agendador de Tarefas** (pesquise "Agendador de Tarefas" no
-   menu Iniciar, ou `taskschd.msc`).
-2. No painel direito, clique em **Criar Tarefa...** (não "Criar Tarefa
-   Básica", para termos mais opções).
-3. Aba **Geral**:
-   - Nome: `HotSwap`
-   - Marque **Executar somente quando o usuário estiver conectado**
-     (assim ele aparece na sua sessão/bandeja, não numa sessão oculta).
-   - Marque **Executar com privilégios mais altos** apenas se você notar
-     que a troca de resolução falha sem isso (normalmente não precisa).
-4. Aba **Disparadores** → **Novo...**:
-   - Iniciar a tarefa: **Ao fazer logon**
-   - Usuário específico: seu usuário
-   - Clique OK.
-5. Aba **Ações** → **Novo...**:
-   - Ação: **Iniciar um programa**
-   - Programa/script: caminho completo do `HotSwap.exe`
-     (ex: `C:\Users\<você>\AppData\Local\HotSwap\HotSwap.exe`)
-   - Clique OK.
-6. Aba **Condições**:
-   - Desmarque "Iniciar a tarefa somente se o computador estiver com
-     alimentação de CA" (para notebooks, se relevante).
-7. Aba **Configurações**:
-   - Desmarque "Parar a tarefa se ela for executada por mais de..." (o
-     HotSwap roda o tempo todo na bandeja, então isso mataria o app).
-8. Clique **OK** e informe sua senha do Windows se solicitado.
+### Opção A — script pronto (recomendado)
 
-Pronto — no próximo logon, o HotSwap já vai estar lá na bandeja, como
-você descreveu, sem parecer que "autoiniciou": ele só já está no lugar
-certo.
+Na raiz do projeto há dois scripts PowerShell:
 
-### Testar sem reiniciar
+- `instalar-inicializacao.ps1` — pede o caminho do `HotSwap.exe` e cria
+  o atalho na pasta Inicializar automaticamente.
+- `desinstalar-inicializacao.ps1` — remove esse atalho.
 
-Clique com o botão direito na tarefa criada → **Executar**. O ícone deve
-aparecer na bandeja em segundos.
+Clique com o botão direito em `instalar-inicializacao.ps1` → **Executar
+com o PowerShell**, informe o caminho do `.exe` quando pedido, e pronto.
+
+### Opção B — manualmente
+
+1. Compile ou baixe o `HotSwap.exe` e coloque em uma pasta definitiva
+   (ex: `C:\Programas\HotSwap`).
+2. Pressione `Win + R`, digite `shell:startup` e aperte Enter — isso
+   abre a pasta Inicializar do seu usuário.
+3. Crie um atalho do `HotSwap.exe` dentro dessa pasta (botão direito no
+   `.exe` → Criar atalho → mova o atalho para a pasta Inicializar).
+
+Pronto — no próximo logon, o HotSwap já vai estar lá na bandeja.
+
+> **Nota sobre Tarefa Agendada:** é possível configurar o HotSwap para
+> iniciar via Agendador de Tarefas do Windows em vez da pasta
+> Inicializar (mais controle sobre condições de disparo), mas isso faz
+> o app **não aparecer** na aba "Inicializar" do Gerenciador de
+> Tarefas — essa aba lista apenas os mecanismos clássicos de
+> autostart (pasta Inicializar + chaves do Registro `Run`), não
+> Tarefas Agendadas. Se você quer ver o HotSwap nessa lista junto com
+> seus outros programas, use a pasta Inicializar (Opção A ou B acima).
 
 ## Estrutura do projeto
 
