@@ -1,0 +1,67 @@
+name: Build e Release
+
+# Dispara automaticamente sempre que uma tag no formato v1.0.0, v1.2.3 etc.
+# for enviada ao repositório. Também pode ser disparado manualmente pela aba
+# "Actions" do GitHub (workflow_dispatch), útil para testar o build sem criar
+# uma tag/release de verdade.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Instalar .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restaurar dependências
+        run: dotnet restore src/HotSwap/HotSwap.csproj
+
+      - name: Publicar (win-x64, single file)
+        run: >
+          dotnet publish src/HotSwap/HotSwap.csproj
+          -c Release
+          -r win-x64
+          --self-contained false
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -o publish
+
+      - name: Compactar em .zip
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}"
+          Compress-Archive -Path publish\* -DestinationPath "HotSwap-$version-win-x64.zip"
+
+      - name: Publicar Release no GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: HotSwap-*-win-x64.zip
+          generate_release_notes: true
+          body: |
+            ## HotSwap ${{ github.ref_name }}
+
+            **Como instalar:** baixe o `.zip` abaixo, extraia em uma pasta
+            permanente (ex: `C:\Programas\HotSwap`) e rode `HotSwap.exe`.
+
+            Requer o **.NET 8 Desktop Runtime** instalado
+            ([baixar aqui](https://dotnet.microsoft.com/download/dotnet/8.0)
+            — escolha "Desktop Runtime x64"). Se você já tem Visual Studio
+            2022 instalado, provavelmente já tem o runtime.
+
+            Veja o [README](https://github.com/${{ github.repository }}#readme)
+            para instruções de uso e como configurar para iniciar com o Windows.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,21 @@
+# .NET / Visual Studio
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Rider / VS Code
+.idea/
+*.DotSettings.user
+
+# Publicação
+publish/
+*.pdb
+
+# Dados locais do app (não faz sentido versionar perfis de outra pessoa)
+perfis.json
+
+# OS
+Thumbs.db
+.DS_Store

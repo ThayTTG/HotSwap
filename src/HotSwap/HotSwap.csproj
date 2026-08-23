@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <AssemblyName>HotSwap</AssemblyName>
+    <RootNamespace>HotSwap</RootNamespace>
+    <Version>1.0.0</Version>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+
+    <Authors>Thayna</Authors>
+    <Product>HotSwap</Product>
+    <Description>Utilitário de bandeja para trocar resolução e Hz do monitor com um duplo clique.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- TROQUE pela URL real do seu repositório assim que criá-lo no GitHub -->
+    <PackageProjectUrl>https://github.com/SEU-USUARIO/HotSwap</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SEU-USUARIO/HotSwap</RepositoryUrl>
+
+    <!-- Gera um único .exe autocontido (não precisa instalar .NET na máquina que rodar) -->
+    <SelfContained>false</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="app.ico" CopyToOutputDirectory="PreserveNewest" Condition="Exists('app.ico')" />
+  </ItemGroup>
+
+</Project>
