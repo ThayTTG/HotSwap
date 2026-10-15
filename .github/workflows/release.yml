@@ -8,6 +8,10 @@ on:
   push:
     tags:
       - "v*"
+    # Enviar algo para o branch "release" também lança uma versão:
+    # a tag vem do <Version> do .csproj (ex.: 1.1.0 -> v1.1.0).
+    branches:
+      - release
   workflow_dispatch:
 
 permissions:
@@ -25,6 +29,15 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
+
+      - name: Descobrir a versão
+        id: versao
+        shell: pwsh
+        run: |
+          [xml]$proj = Get-Content src/HotSwap/HotSwap.csproj
+          $v = ($proj.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ })[0]
+          if ("${{ github.ref_type }}" -eq "tag") { $tag = "${{ github.ref_name }}" } else { $tag = "v$v" }
+          "tag=$tag" >> $env:GITHUB_OUTPUT
 
       - name: Restaurar dependências
         run: dotnet restore src/HotSwap/HotSwap.csproj
@@ -50,12 +63,16 @@ jobs:
       - name: Publicar Release no GitHub
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.versao.outputs.tag }}
+          name: HotSwap ${{ steps.versao.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           files: |
             HotSwap-win-x64.zip
             HotSwap-win-x64.zip.sha256
           generate_release_notes: true
           body: |
-            ## HotSwap ${{ github.ref_name }}
+            ## HotSwap ${{ steps.versao.outputs.tag }}
 
             Troque a resolução, a taxa de atualização e o conteúdo entre telas direto da bandeja do Windows.
 
