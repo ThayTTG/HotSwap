@@ -39,13 +39,12 @@ as Configurações de Exibição do Windows toda vez.
 4. Clique com o botão direito no ícone → explore o menu para ver os
    perfis detectados automaticamente para o seu monitor.
 5. (Opcional) Para o HotSwap já estar na bandeja assim que o Windows
-   liga, rode `instalar-inicializacao.ps1` (clique direito → Executar
+   liga, rode `scripts/instalar-inicializacao.ps1` (clique direito → Executar
    com o PowerShell) — ele cria um atalho na pasta Inicializar do
    Windows. Detalhes em [`src/HotSwap/README.md`](src/HotSwap/README.md#colocando-na-bandeja-ao-ligar-o-pc).
 
-**Requisito:** [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
-(escolha "Desktop Runtime x64"). Se você já usa Visual Studio 2022 ou
-outros programas .NET, provavelmente já tem isso instalado.
+**Requisito:** Windows 10 ou 11 (64 bits). Não precisa instalar o .NET:
+o `HotSwap.exe` publicado já leva tudo o que precisa dentro dele.
 
 O `perfis.json` gerado fica em `%APPDATA%\HotSwap\perfis.json` — o menu
 de contexto tem um atalho "Abrir pasta de perfis..." para chegar lá

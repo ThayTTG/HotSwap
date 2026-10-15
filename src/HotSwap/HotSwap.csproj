@@ -14,6 +14,7 @@
 
     <Authors>Thayna</Authors>
     <Product>HotSwap</Product>
+    <Company>NokyLabs</Company>
     <Description>Utilitário de bandeja para trocar resolução e Hz do monitor com um duplo clique, e trocar o conteúdo entre telas.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/ThayTTG/HotSwap</PackageProjectUrl>
