@@ -1,15 +1,17 @@
 name: Build e Release
 
-# Dispara automaticamente sempre que uma tag no formato v1.0.0, v1.2.3 etc.
-# for enviada ao repositório. Também pode ser disparado manualmente pela aba
-# "Actions" do GitHub (workflow_dispatch), útil para testar o build sem criar
-# uma tag/release de verdade.
+# Lança uma versão nova do HotSwap.
+#
+# Como disparar:
+#   • enviar qualquer commit para o branch "release"  → a tag vem do <Version> do HotSwap.csproj
+#   • ou enviar uma tag no formato v1.2.3
+#
+# Se a versão já foi lançada, o workflow para logo no começo e pede para aumentar o <Version>.
+# Para só testar se compila, sem lançar nada, existe o workflow "Verificar compilação".
 on:
   push:
     tags:
       - "v*"
-    # Enviar algo para o branch "release" também lança uma versão:
-    # a tag vem do <Version> do .csproj (ex.: 1.1.0 -> v1.1.0).
     branches:
       - release
   workflow_dispatch:
@@ -38,6 +40,20 @@ jobs:
           $v = @($proj.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ })[0]
           if ("${{ github.ref_type }}" -eq "tag") { $tag = "${{ github.ref_name }}" } else { $tag = "v$v" }
           "tag=$tag" >> $env:GITHUB_OUTPUT
+
+      - name: Conferir se a versão é nova
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ steps.versao.outputs.tag }}"
+          gh release view $tag --repo "${{ github.repository }}" *> $null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "::error title=Versão já lançada::A versão $tag já existe. Aumente o <Version> no .csproj (ex.: 1.0.0 → 1.0.1) e envie de novo para o branch release."
+            exit 1
+          }
+          Write-Host "A versão $tag é nova. Seguindo com o lançamento."
+          exit 0
 
       - name: Restaurar dependências
         run: dotnet restore src/HotSwap/HotSwap.csproj
