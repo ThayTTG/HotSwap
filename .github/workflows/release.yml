@@ -35,7 +35,7 @@ jobs:
         shell: pwsh
         run: |
           [xml]$proj = Get-Content src/HotSwap/HotSwap.csproj
-          $v = ($proj.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ })[0]
+          $v = @($proj.Project.PropertyGroup | ForEach-Object { $_.Version } | Where-Object { $_ })[0]
           if ("${{ github.ref_type }}" -eq "tag") { $tag = "${{ github.ref_name }}" } else { $tag = "v$v" }
           "tag=$tag" >> $env:GITHUB_OUTPUT
 
