@@ -17,6 +17,24 @@ taxa de atualização (Hz) dos seus monitores com um duplo clique.
   Também salva o estado atual dos monitores como **Perfil 1** e
   **Perfil 2** de partida (você pode sobrescrever depois pelo menu
   "Salvar estado atual como...").
+- **Atalho de teclado global** (padrão: `Ctrl+Alt+R`): alterna entre
+  Perfil 1 e Perfil 2 de qualquer lugar do Windows, sem precisar clicar
+  no ícone. Configurável pelo menu "Atalho de teclado..." — pode ser
+  desativado se preferir só o duplo clique.
+- O **ícone da bandeja muda de cor/número** conforme o perfil ativo (1
+  ou 2), então dá pra saber qual está em uso sem abrir o menu.
+- As notificações de sucesso (balões ao trocar/aplicar um perfil) podem
+  ser desativadas pelo menu "Notificações de sucesso" — avisos de erro
+  continuam aparecendo sempre, já que esses são acionáveis.
+- **Trocar o conteúdo entre duas telas** (atalho padrão: `Ctrl+Alt+S`):
+  troca TODAS as janelas que estão em uma tela com TODAS as que estão na
+  outra — por exemplo, se o navegador está na Tela 1 e a Unity na Tela 2,
+  o atalho troca os dois de lugar. Os monitores continuam nas mesmas
+  posições físicas (Tela 1 continua sendo Tela 1); só o conteúdo (as
+  janelas) muda de tela. Cada janela mantém sua posição relativa e seu
+  estado (normal/maximizada/minimizada) na tela nova. Configurável pelo
+  menu "Trocar telas..." — com 3 ou mais monitores, esse menu também
+  deixa escolher quais duas telas participam da troca.
 
 O arquivo `perfis.json` fica em:
 
@@ -114,16 +132,29 @@ Pronto — no próximo logon, o HotSwap já vai estar lá na bandeja.
 
 ```
 HotSwap/
-├── HotSwap.csproj          Projeto .NET (WinForms, net8.0-windows)
-├── app.manifest             Manifesto (DPI aware, sem prompt de UAC)
-├── app.ico                  Ícone do app/bandeja
-├── Program.cs                Ponto de entrada (garante instância única)
-├── TrayAppContext.cs          Ícone de bandeja, menu de contexto, duplo-clique
-├── SaveMainProfileDialog.cs   Diálogo para salvar Perfil 1/2
-├── DisplayInterop.cs          P/Invoke: EnumDisplaySettings, ChangeDisplaySettingsEx
-├── Models.cs                  Classes do perfis.json
-└── ProfileManager.cs           Carrega/salva JSON, detecta modos, aplica perfis
+├── HotSwap.csproj               Projeto .NET (WinForms, net8.0-windows)
+├── app.manifest                 Manifesto (DPI aware, sem prompt de UAC)
+├── app.ico                      Ícone (16–256 px; embutido no .exe)
+├── Program.cs                   Ponto de entrada (garante instância única)
+├── TrayAppContext.cs            Ícone de bandeja, menu, duplo-clique, atalhos
+├── ProfileManager.cs            Carrega/salva JSON, detecta modos, aplica perfis
+├── Models.cs                    Classes do perfis.json
+├── DisplayInterop.cs            P/Invoke: EnumDisplaySettings, ChangeDisplaySettingsEx
+├── WindowSwapper.cs             P/Invoke: EnumWindows, SetWindowPlacement — troca de telas
+├── GlobalHotkey.cs              P/Invoke: RegisterHotKey (suporta múltiplos atalhos)
+├── Theme.cs                     Paleta, fontes, ajustes de DPI e da janela (DWM)
+├── Glyphs.cs                    Ícones de linha do menu, desenhados em código
+├── MenuRenderer.cs              Visual do menu da bandeja (e itens customizados)
+├── ThemedControls.cs            Botão, switch, campo de atalho, seleção, campo de texto
+├── ThemedDialog.cs              Base dos diálogos (cabeçalho, corpo, botões)
+├── HotkeySettingsDialog.cs      Diálogo do atalho Perfil 1/2
+├── SwapScreensSettingsDialog.cs Diálogo do atalho de trocar telas
+└── SaveMainProfileDialog.cs     Diálogo para salvar Perfil 1/2
 ```
+
+As fontes do ícone ficam em `assets/icon/` na raiz do repositório: um SVG
+"mestre" (256 px) e versões redesenhadas pixel a pixel para 16, 20, 24 e
+32 px — os tamanhos da bandeja em 100%, 125%, 150% e 200% de escala.
 
 ## Formato do `perfis.json`
 
@@ -168,12 +199,24 @@ HotSwap/
         { "name": "2560x1440 @ 60Hz", "isAutoDetected": true, ... }
       ]
     }
-  ]
+  ],
+  "settings": {
+    "notificationsEnabled": true,
+    "hotkeyEnabled": true,
+    "hotkeyString": "Ctrl+Alt+R",
+    "swapHotkeyEnabled": true,
+    "swapHotkeyString": "Ctrl+Alt+S",
+    "swapMonitorA": "",
+    "swapMonitorB": ""
+  }
 }
 ```
 
 - `mainProfiles`: os 2 perfis principais (o que o duplo-clique alterna).
   Cada um guarda uma configuração por monitor conectado.
+- `settings`: preferências gerais — pode ser editado manualmente também
+  (ex: trocar `hotkeyString` para outra combinação, ou desativar o
+  atalho/notificações direto no arquivo).
 - `monitors[].profiles`: perfis por monitor — os detectados
   automaticamente (`isAutoDetected: true`) e quaisquer outros que você
   adicionar manualmente editando o JSON (`isAutoDetected: false`).
@@ -213,3 +256,13 @@ reinicie o app para recarregar.
   copiar o `BitsPerPixel` de um perfil detectado com a mesma resolução.
 - Rodar duas instâncias ao mesmo tempo é bloqueado por um Mutex — só uma
   fica ativa.
+- A troca de conteúdo entre telas usa `EnumWindows` para listar as janelas
+  de topo visíveis, ignorando janelas sem título, sem "dono" e janelas de
+  ferramenta (`WS_EX_TOOLWINDOW`) — o mesmo tipo de filtro que ferramentas
+  de Alt+Tab usam para não mexer em popups/diálogos/janelas auxiliares do
+  sistema. Cada janela é associada ao monitor mais próximo dela
+  (`MonitorFromWindow`) e reposicionada com `SetWindowPlacement`/
+  `SetWindowPos`, preservando a posição relativa dentro da tela nova e o
+  estado (normal/maximizada/minimizada). Só janelas que não caibam ainda em
+  outro monitor de tamanho diferente têm sua posição/tamanho ajustados
+  proporcionalmente para não "vazar" da tela.

@@ -1,7 +1,12 @@
-# HotSwap
+<p align="center">
+  <img src="assets/logo.png" width="112" alt="Ícone do HotSwap: um monitor azul com duas setas de troca">
+</p>
 
-Utilitário de bandeja do sistema para Windows que troca a resolução e a
-taxa de atualização (Hz) dos seus monitores com um duplo clique.
+<h1 align="center">HotSwap</h1>
+
+<p align="center">
+  Troque a resolução e o Hz dos seus monitores — e o conteúdo entre as telas — direto da bandeja do Windows.
+</p>
 
 Nasceu de uma necessidade simples: alternar rapidamente entre duas
 configurações de tela (por exemplo, "produtividade" e "jogos") sem abrir
@@ -9,16 +14,19 @@ as Configurações de Exibição do Windows toda vez.
 
 ## Como funciona
 
-- Fica na bandeja do sistema, sem janela visível no dia a dia.
-- **Duplo clique** no ícone: alterna entre **Perfil 1** e **Perfil 2**
-  (os dois perfis principais).
-- **Clique direito**: menu com os dois perfis principais, mais todos os
-  perfis por monitor — incluindo os "Perfis padrão" detectados
-  automaticamente (todas as resoluções/Hz suportadas pelo monitor).
+- Fica na bandeja do sistema, sem janela visível no dia a dia. O ícone
+  mostra qual perfil está ativo (selo **1** azul ou **2** ciano).
+- **Duplo clique** no ícone, ou **Ctrl+Alt+R** de qualquer lugar: alterna
+  entre **Perfil 1** e **Perfil 2** (os dois perfis principais).
+- **Ctrl+Alt+S**: troca o conteúdo entre duas telas — todas as janelas de
+  uma vão para a outra e vice-versa, sem mudar os monitores de lugar.
+- **Clique direito**: menu com os perfis principais, as resoluções
+  suportadas por cada monitor (agrupadas por resolução, com o modo atual
+  marcado), os atalhos e as opções.
 - Na primeira execução, detecta os monitores conectados e grava as
   resoluções/Hz suportadas em um `perfis.json`, organizado por monitor.
-- Pode ser configurado para já estar na bandeja assim que o Windows liga
-  (via Tarefa Agendada — instruções abaixo).
+- Pode já estar na bandeja assim que o Windows liga (pasta Inicializar —
+  instruções abaixo).
 
 ## Baixar e usar (sem precisar programar)
 

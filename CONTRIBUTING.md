@@ -60,6 +60,24 @@ seja uma dessas pegadinhas de nível API do Windows, não um erro óbvio de
 lógica — o menu "Diagnóstico de monitores..." existe justamente para
 investigar esse tipo de caso.
 
+### Identidade visual
+
+- Cores, fontes e helpers de DPI ficam todos em `Theme.cs` — use
+  `Theme.Accent`, `Theme.Surface` etc. em vez de cores soltas no código.
+- O menu da bandeja é desenhado por `MenuRenderer.cs`. Submenus não herdam
+  o renderer do menu pai: depois de montar os itens, chame
+  `Theme.StyleDropDown(menu)` (ele desce a árvore sozinho).
+- Diálogos novos devem herdar de `ThemedDialog` e usar os controles de
+  `ThemedControls.cs` (os controles padrão do WinForms não respeitam bem o
+  tema escuro). Escreva medidas em pixels de 96 DPI — o escalonamento é
+  automático.
+- Ícones de menu são desenhados em código (`Glyphs.cs`), num grid de
+  16×16, para ficarem nítidos em qualquer escala.
+- O ícone do app vem de `assets/icon/`. Se mudar o desenho, regenere o
+  `src/HotSwap/app.ico` com todos os tamanhos (16, 20, 24, 32, 40, 48, 64,
+  128, 256) — os de 16 a 32 px são desenhos próprios, não reduções do de
+  256.
+
 ## Código de conduta
 
 Seja gentil. É um projeto pequeno feito por diversão e utilidade — trate

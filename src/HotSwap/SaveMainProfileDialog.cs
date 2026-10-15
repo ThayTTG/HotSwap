@@ -1,69 +1,57 @@
 namespace HotSwap;
 
 /// <summary>
-/// Diálogo simples para escolher em qual dos 2 slots principais (Perfil 1 / Perfil 2)
+/// Diálogo para escolher em qual dos 2 slots principais (Perfil 1 / Perfil 2)
 /// salvar a configuração atual dos monitores, e com que nome.
 /// </summary>
-internal class SaveMainProfileDialog : Form
+internal class SaveMainProfileDialog : ThemedDialog
 {
-    private readonly ComboBox _slotCombo;
-    private readonly TextBox _nameBox;
+    private readonly ThemedSelect _slotSelect;
+    private readonly TextField _nameField;
 
     public int TargetIndex { get; private set; }
-    public string ChosenName => _nameBox.Text.Trim();
+
+    /// <summary>Nome digitado; se ficar em branco, usa "Perfil N" do slot escolhido.</summary>
+    public string ChosenName
+    {
+        get
+        {
+            var name = _nameField.Box.Text.Trim();
+            return name.Length > 0 ? name : $"Perfil {TargetIndex + 1}";
+        }
+    }
 
     public SaveMainProfileDialog(List<string> existingNames)
+        : base("Salvar perfil principal", "Guarda a resolução e o Hz atuais de todas as telas", Glyph.Save)
     {
-        Text = "Salvar perfil principal";
-        FormBorderStyle = FormBorderStyle.FixedDialog;
-        StartPosition = FormStartPosition.CenterScreen;
-        MaximizeBox = false;
-        MinimizeBox = false;
-        ClientSize = new Size(340, 150);
+        AddLabel("Salvar no slot", 4);
 
-        var slotLabel = new Label { Text = "Salvar como:", Location = new Point(12, 15), AutoSize = true };
+        // _nameField precisa existir ANTES de ligarmos o SelectedIndexChanged
+        // e de escolhermos o índice inicial: o evento dispara imediatamente
+        // ao definir SelectedIndex, ainda aqui dentro do construtor.
+        _nameField = new TextField();
+        _nameField.Box.Text = existingNames.Count > 0 ? existingNames[0] : "Perfil 1";
 
-        // _nameBox precisa existir ANTES de registrarmos o handler de
-        // SelectedIndexChanged e ANTES de setar SelectedIndex logo abaixo,
-        // porque o ComboBox dispara o evento imediatamente ao atribuir
-        // SelectedIndex — mesmo aqui dentro do construtor.
-        var nameLabel = new Label { Text = "Nome:", Location = new Point(12, 70), AutoSize = true };
-        _nameBox = new TextBox
+        _slotSelect = AddField(new ThemedSelect());
+        _slotSelect.SetOptions(new[]
         {
-            Location = new Point(12, 90),
-            Width = 300,
-            Text = existingNames.Count > 0 ? existingNames[0] : "Perfil 1",
-        };
-
-        _slotCombo = new ComboBox
+            new ThemedSelect.Option("0", existingNames.Count > 0 ? $"Perfil 1  ·  {existingNames[0]}" : "Perfil 1"),
+            new ThemedSelect.Option("1", existingNames.Count > 1 ? $"Perfil 2  ·  {existingNames[1]}" : "Perfil 2"),
+        });
+        _slotSelect.SelectedIndexChanged += (_, _) =>
         {
-            Location = new Point(12, 35),
-            Width = 300,
-            DropDownStyle = ComboBoxStyle.DropDownList,
+            _nameField.Box.Text = _slotSelect.SelectedIndex < existingNames.Count
+                ? existingNames[_slotSelect.SelectedIndex]
+                : $"Perfil {_slotSelect.SelectedIndex + 1}";
         };
-        _slotCombo.Items.Add(existingNames.Count > 0 ? $"Perfil 1 ({existingNames[0]})" : "Perfil 1");
-        _slotCombo.Items.Add(existingNames.Count > 1 ? $"Perfil 2 ({existingNames[1]})" : "Perfil 2");
-        _slotCombo.SelectedIndexChanged += (_, _) =>
-        {
-            _nameBox.Text = _slotCombo.SelectedIndex < existingNames.Count
-                ? existingNames[_slotCombo.SelectedIndex]
-                : $"Perfil {_slotCombo.SelectedIndex + 1}";
-        };
-        _slotCombo.SelectedIndex = 0;
+        _slotSelect.SelectedIndex = 0;
 
-        var okButton = new Button { Text = "Salvar", DialogResult = DialogResult.OK, Location = new Point(150, 120), Width = 80 };
-        var cancelButton = new Button { Text = "Cancelar", DialogResult = DialogResult.Cancel, Location = new Point(236, 120), Width = 80 };
+        AddLabel("Nome", 14);
+        AddField(_nameField);
+        AddHint("O nome aparece no menu da bandeja. A configuração salva é a que está na tela agora.");
 
-        okButton.Click += (_, _) => TargetIndex = _slotCombo.SelectedIndex;
+        OkButton.Click += (_, _) => TargetIndex = Math.Max(0, _slotSelect.SelectedIndex);
 
-        Controls.Add(slotLabel);
-        Controls.Add(_slotCombo);
-        Controls.Add(nameLabel);
-        Controls.Add(_nameBox);
-        Controls.Add(okButton);
-        Controls.Add(cancelButton);
-
-        AcceptButton = okButton;
-        CancelButton = cancelButton;
+        FinishLayout();
     }
 }

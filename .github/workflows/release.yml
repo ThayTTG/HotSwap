@@ -34,7 +34,7 @@ jobs:
           dotnet publish src/HotSwap/HotSwap.csproj
           -c Release
           -r win-x64
-          --self-contained false
+          --self-contained true
           -p:PublishSingleFile=true
           -p:IncludeNativeLibrariesForSelfExtract=true
           -o publish
@@ -42,26 +42,30 @@ jobs:
       - name: Compactar em .zip
         shell: pwsh
         run: |
-          $version = "${{ github.ref_name }}"
-          Compress-Archive -Path publish\* -DestinationPath "HotSwap-$version-win-x64.zip"
+          # Nome fixo: é o que o site e o NokyLabs Launcher procuram em releases/latest
+          Remove-Item publish\*.pdb -ErrorAction SilentlyContinue
+          Compress-Archive -Path publish\* -DestinationPath "HotSwap-win-x64.zip"
+          (Get-FileHash HotSwap-win-x64.zip -Algorithm SHA256).Hash | Out-File -Encoding ascii HotSwap-win-x64.zip.sha256
 
       - name: Publicar Release no GitHub
         uses: softprops/action-gh-release@v2
         with:
-          files: HotSwap-*-win-x64.zip
+          files: |
+            HotSwap-win-x64.zip
+            HotSwap-win-x64.zip.sha256
           generate_release_notes: true
           body: |
             ## HotSwap ${{ github.ref_name }}
 
-            **Como instalar:** baixe o `.zip` abaixo, extraia em uma pasta
-            permanente (ex: `C:\Programas\HotSwap`) e rode `HotSwap.exe`.
+            Troque a resolução, a taxa de atualização e o conteúdo entre telas direto da bandeja do Windows.
 
-            Requer o **.NET 8 Desktop Runtime** instalado
-            ([baixar aqui](https://dotnet.microsoft.com/download/dotnet/8.0)
-            — escolha "Desktop Runtime x64"). Se você já tem Visual Studio
-            2022 instalado, provavelmente já tem o runtime.
+            **Como instalar**
+            1. Baixe o `HotSwap-win-x64.zip` abaixo (ou instale pelo NokyLabs Launcher)
+            2. Extraia em uma pasta permanente e abra o `HotSwap.exe`
+            3. Se aparecer o aviso azul do Windows, clique em "Mais informações" › "Executar assim mesmo"
 
-            Veja o [README](https://github.com/${{ github.repository }}#readme)
-            para instruções de uso e como configurar para iniciar com o Windows.
+            **Requisitos:** Windows 10 ou 11 (64 bits). Não precisa instalar o .NET.
+
+            Mais detalhes: https://thayttg.github.io/nokylabs/#hotswap
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

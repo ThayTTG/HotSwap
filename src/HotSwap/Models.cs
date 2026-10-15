@@ -94,6 +94,40 @@ public class ProfileStore
 
     /// <summary>Índice do perfil principal atualmente ativo (0 ou 1), usado para saber para qual alternar no próximo duplo-clique.</summary>
     public int ActiveMainProfileIndex { get; set; } = 0;
+
+    /// <summary>Preferências do usuário que não são "perfis" — atalho de teclado, notificações, etc.</summary>
+    public AppSettings Settings { get; set; } = new();
+}
+
+/// <summary>Preferências gerais do app, persistidas junto com os perfis.</summary>
+public class AppSettings
+{
+    /// <summary>Mostra um balão de notificação a cada troca/aplicação bem-sucedida.
+    /// Avisos de erro sempre aparecem, independente desta opção — só as
+    /// notificações "de sucesso/conveniência" são afetadas.</summary>
+    public bool NotificationsEnabled { get; set; } = true;
+
+    /// <summary>Se o atalho de teclado global (alterna Perfil 1/2) está ativo.</summary>
+    public bool HotkeyEnabled { get; set; } = true;
+
+    /// <summary>Combinação do atalho, no formato "Ctrl+Alt+R" (nomes de Keys do .NET).</summary>
+    public string HotkeyString { get; set; } = "Ctrl+Alt+R";
+
+    /// <summary>Se o atalho que troca o conteúdo entre duas telas está ativo.</summary>
+    public bool SwapHotkeyEnabled { get; set; } = true;
+
+    /// <summary>Combinação do atalho de troca de conteúdo entre telas, mesmo formato de HotkeyString.</summary>
+    public string SwapHotkeyString { get; set; } = "Ctrl+Alt+S";
+
+    /// <summary>
+    /// Nomes (DeviceName, ex: "\\.\DISPLAY1") dos dois monitores cujo
+    /// conteúdo (janelas) deve ser trocado ao acionar o atalho de swap.
+    /// Vazio/não configurado até o usuário escolher pelo menu — nesse caso
+    /// o HotSwap usa os dois primeiros monitores ativos, na ordem em que o
+    /// Windows os reporta.
+    /// </summary>
+    public string SwapMonitorA { get; set; } = "";
+    public string SwapMonitorB { get; set; } = "";
 }
 
 /// <summary>
