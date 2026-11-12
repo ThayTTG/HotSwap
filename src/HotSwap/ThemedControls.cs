@@ -637,6 +637,6 @@ internal sealed class DialogHeader : Control
         TextRenderer.DrawText(g, Text, Theme.TitleFont, new Rectangle(textX, top, textW, titleSize.Height), Color.White,
             TextFormatFlags.NoPadding | TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
         TextRenderer.DrawText(g, _subtitle, Theme.SmallFont, new Rectangle(textX, top + titleSize.Height + gap, textW, subSize.Height),
-            Color.FromArgb(0x9F, 0xB6, 0xDE), TextFormatFlags.NoPadding | TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
+            Theme.HeaderSubtitle, TextFormatFlags.NoPadding | TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
     }
 }

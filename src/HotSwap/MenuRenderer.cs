@@ -61,7 +61,7 @@ internal sealed class MenuRenderer : ToolStripProfessionalRenderer
         {
             Color fill = hot
                 ? (item.Pressed ? Theme.SurfacePressed : Theme.SurfaceHover)
-                : Color.FromArgb(0x13, 0x22, 0x40); // destaque leve e permanente do item ativo
+                : Theme.ActiveItem; // destaque leve e permanente do item ativo
             using var path = Theme.RoundedRect(rect, radius);
             using var b = new SolidBrush(fill);
             g.FillPath(b, path);

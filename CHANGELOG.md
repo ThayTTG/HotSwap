@@ -5,6 +5,7 @@ Tudo o que muda no HotSwap, versão por versão. O texto de cada versão vira as
 **Como usar:** anote as mudanças em `## [Não lançado]` enquanto trabalha. Na hora de lançar, é só aumentar o `<Version>` no `.csproj` e enviar para o branch `release`: o lançamento usa essa seção e ela vira a seção da versão sozinha.
 
 ## [Não lançado]
+- Cores do Kit NokyLabs: o menu e as janelas agora usam o fundo roxeado dos outros apps da NokyLabs, com o azul do HotSwap como destaque.
 
 ## [1.1.0] - 2026-10-15
 - Primeira versão para baixar pelos Releases e pelo NokyLabs Launcher, sem precisar instalar o .NET.

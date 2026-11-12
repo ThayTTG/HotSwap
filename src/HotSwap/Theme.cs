@@ -5,37 +5,46 @@ using System.Runtime.InteropServices;
 namespace HotSwap;
 
 /// <summary>
-/// Identidade visual do HotSwap: paleta (tons de azul sobre um fundo
-/// azul-marinho escuro), fontes, helpers de DPI e os ajustes nativos do
-/// Windows (barra de título escura, cantos arredondados no Windows 11) usados
-/// pelo menu da bandeja e pelos diálogos.
+/// Identidade visual do HotSwap: paleta do Kit NokyLabs (o fundo roxeado,
+/// igual ao dos outros apps) com o azul do HotSwap como destaque, fontes,
+/// helpers de DPI e os ajustes nativos do Windows (barra de título escura,
+/// cantos arredondados no Windows 11) usados pelo menu da bandeja e pelos
+/// diálogos.
 /// </summary>
 internal static class Theme
 {
-    // --- Paleta -----------------------------------------------------------
-    public static readonly Color Background = Color.FromArgb(0x0E, 0x17, 0x29);
-    public static readonly Color Surface = Color.FromArgb(0x15, 0x21, 0x3A);
-    public static readonly Color SurfaceHover = Color.FromArgb(0x1C, 0x2D, 0x4F);
-    public static readonly Color SurfacePressed = Color.FromArgb(0x23, 0x39, 0x6A);
-    public static readonly Color Border = Color.FromArgb(0x26, 0x37, 0x5A);
-    public static readonly Color Separator = Color.FromArgb(0x1F, 0x2D, 0x4A);
-    public static readonly Color Text = Color.FromArgb(0xE7, 0xEE, 0xFB);
-    public static readonly Color TextMuted = Color.FromArgb(0x8D, 0xA2, 0xC7);
-    public static readonly Color TextDim = Color.FromArgb(0x5B, 0x6E, 0x93);
+    // --- Paleta (Kit NokyLabs, tema escuro) --------------------------------
+    // Os neutros são os mesmos da NokyLabs.UI (Tema/Cores.axaml); a cor de
+    // destaque é a do HotSwap (#3B82F6, NokyColors.HotSwap), com hover e
+    // pressionado calculados como no AccentPalette (12% de branco / 14% de preto).
+    public static readonly Color Background = Color.FromArgb(0x11, 0x0E, 0x1A);      // BgColor
+    public static readonly Color Surface = Color.FromArgb(0x1C, 0x17, 0x29);         // SurfaceColor
+    public static readonly Color SurfaceHover = Color.FromArgb(0x25, 0x1F, 0x36);    // SurfaceHoverColor
+    public static readonly Color SurfacePressed = Color.FromArgb(0x2F, 0x28, 0x43);  // SurfaceRaisedColor
+    public static readonly Color Border = Color.FromArgb(0x34, 0x2B, 0x4B);          // BorderColor
+    public static readonly Color Separator = Color.FromArgb(0x25, 0x1F, 0x36);       // SurfaceHoverColor
+    public static readonly Color Text = Color.FromArgb(0xF0, 0xEC, 0xF8);            // TextColor
+    public static readonly Color TextMuted = Color.FromArgb(0x96, 0x8D, 0xAC);       // TextMutedColor
+    /// <summary>Itens desativados: TextMuted 40% mais perto do fundo.</summary>
+    public static readonly Color TextDim = Color.FromArgb(0x61, 0x5A, 0x72);
     /// <summary>Texto secundário à direita dos itens (resolução, atalho) —
     /// mais claro que TextMuted para continuar nítido em letra pequena.</summary>
-    public static readonly Color TextSecondary = Color.FromArgb(0xA6, 0xB8, 0xD8);
-    public static readonly Color SectionText = Color.FromArgb(0x74, 0x89, 0xB0);
-    public static readonly Color HeaderSubtitle = Color.FromArgb(0xB4, 0xC7, 0xE8);
-    public static readonly Color Accent = Color.FromArgb(0x3B, 0x82, 0xF6);
-    public static readonly Color AccentHover = Color.FromArgb(0x60, 0xA5, 0xFA);
-    public static readonly Color AccentPressed = Color.FromArgb(0x25, 0x63, 0xEB);
+    public static readonly Color TextSecondary = Color.FromArgb(0xC9, 0xC1, 0xDB);  // TextSecondaryColor
+    public static readonly Color SectionText = Color.FromArgb(0x96, 0x8D, 0xAC);     // TextMutedColor
+    public static readonly Color HeaderSubtitle = Color.FromArgb(0xC9, 0xC1, 0xDB);  // TextSecondaryColor
+    public static readonly Color Accent = Color.FromArgb(0x3B, 0x82, 0xF6);          // azul do HotSwap
+    public static readonly Color AccentHover = Color.FromArgb(0x53, 0x91, 0xF7);
+    public static readonly Color AccentPressed = Color.FromArgb(0x33, 0x70, 0xD4);
+    /// <summary>Fundo leve e permanente do perfil ativo no menu (azul 15% sobre o fundo).</summary>
+    public static readonly Color ActiveItem = Color.FromArgb(0x17, 0x1F, 0x3B);
     public static readonly Color Cyan = Color.FromArgb(0x22, 0xD3, 0xEE);
-    public static readonly Color Danger = Color.FromArgb(0xF8, 0x71, 0x71);
-    public static readonly Color HeaderStart = Color.FromArgb(0x1B, 0x3A, 0x78);
-    public static readonly Color HeaderEnd = Color.FromArgb(0x10, 0x1D, 0x36);
-    public static readonly Color KeyCap = Color.FromArgb(0x1E, 0x2D, 0x4D);
-    public static readonly Color KeyCapBorder = Color.FromArgb(0x2E, 0x43, 0x70);
+    public static readonly Color Danger = Color.FromArgb(0xF6, 0x70, 0x70);          // DangerColor
+    /// <summary>Cabeçalhos: brilho azul (35% do destaque sobre a superfície)
+    /// que se apaga no fundo roxeado, como o "hero" do Kit.</summary>
+    public static readonly Color HeaderStart = Color.FromArgb(0x27, 0x3C, 0x71);
+    public static readonly Color HeaderEnd = Color.FromArgb(0x15, 0x11, 0x20);       // SidebarColor
+    public static readonly Color KeyCap = Color.FromArgb(0x25, 0x1F, 0x36);          // SurfaceHoverColor
+    public static readonly Color KeyCapBorder = Color.FromArgb(0x4B, 0x42, 0x60);
 
     /// <summary>Cor de cada perfil principal: Perfil 1 = azul, Perfil 2 = ciano
     /// (as mesmas cores das duas setas do ícone).</summary>
